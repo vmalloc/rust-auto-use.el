@@ -9,21 +9,24 @@
 (defun rust-auto-use/insert-use-line (use-line)
   (save-excursion
     (beginning-of-buffer)
-    (forward-line -1)
-    (forward-paragraph)
-    (while (not (or (looking-at "use ")
-                    (looking-at "[[:space:]]*$")))
-      (forward-line))
+    (while (or (looking-at "/")
+               (looking-at "extern"))
+      (forward-line)
+      (beginning-of-line))
 
-    (newline)
-    (insert use-line)))
+      (insert use-line)
+      (newline)
+      (if (and (not (looking-at "[[:space:]]*$"))
+               (not (looking-at "use ")))
+          (newline))))
 
-(defun rust-auto-use/deduce-use-line ()
-  (let ((symbol (symbol-at-point)))
-    (let ((cached-result (gethash symbol rust-auto-use/symbol-cache)))
-      (if cached-result
-          cached-result
-        (rust-auto-use/save-result symbol (rust-auto-use/parse-import-string-from-symbol symbol))))))
+
+  (defun rust-auto-use/deduce-use-line ()
+    (let ((symbol (symbol-at-point)))
+      (let ((cached-result (gethash symbol rust-auto-use/symbol-cache)))
+        (if cached-result
+            cached-result
+          (rust-auto-use/save-result symbol (rust-auto-use/parse-import-string-from-symbol symbol))))))
 
 
 (defun rust-auto-use/parse-import-string-from-symbol (symbol)
