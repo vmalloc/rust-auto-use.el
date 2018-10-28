@@ -9,16 +9,19 @@
 (defun rust-auto-use/insert-use-line (use-line)
   (save-excursion
     (beginning-of-buffer)
-    (while (or (looking-at "/")
-               (looking-at "extern"))
-      (forward-line)
-      (beginning-of-line))
+    (if (not (search-forward-regexp "^use" nil t))
+        (progn
+          (while (or (looking-at "/")
+                     (looking-at "extern"))
+            (forward-line)
+            (beginning-of-line))
+          (newline)
+          (forward-line -1)))
 
-      (insert use-line)
-      (newline)
-      (if (and (not (looking-at "[[:space:]]*$"))
-               (not (looking-at "use ")))
-          (newline))))
+
+    (end-of-line)
+    (newline)
+    (insert use-line)))
 
 
   (defun rust-auto-use/deduce-use-line ()
