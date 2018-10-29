@@ -41,9 +41,7 @@
   (let ((symbol (symbol-at-point)))
     (let ((cached-result (gethash symbol rust-auto-use--symbol-cache)))
       (if cached-result cached-result (rust-auto-use--cache-result symbol (format "use %s::%s;"
-                                                                                (read-string (format
-                                                                                              "import
- %s from? " symbol)) symbol))))))
+                                                                                (read-string (format "import %s from? " symbol)) symbol))))))
 
 
 
