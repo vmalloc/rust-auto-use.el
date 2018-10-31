@@ -18,9 +18,6 @@
   (interactive)
   (save-excursion (rust-auto-use--insert-use-line (rust-auto-use--deduce-use-line))))
 
-(global-set-key (kbd "C-<f11>") 'rust-auto-use)
-
-
 (defun rust-auto-use--insert-use-line (use-line)
   "Insert the actual use line USE-LINE into the code."
   (save-excursion
