@@ -35,7 +35,7 @@
   )
 
 (defcustom rust-auto-use-cache-filename
-  (concat user-emacs-directory ".rust-auto-use-cache")
+  (expand-file-name ".rust-auto-use-cache" user-emacs-directory)
   "File name to use for caching locations from which symbols should be imported."
   :group 'rust-auto-use-customizations
   :type 'file)
