@@ -28,7 +28,17 @@
 
 (defvar rust-auto-use--symbol-cache)
 
-(defvar rust-auto-use-cache-filename (concat user-emacs-directory "e.rust-auto-use-cache"))
+
+(defgroup rust-auto-use-customizations nil
+  "rust-auto-use customization group"
+  :group 'rust-mode
+  )
+
+(defcustom rust-auto-use-cache-filename
+  (concat user-emacs-directory ".rust-auto-use-cache")
+  "File name to use for caching locations from which symbols should be imported."
+  :group 'rust-auto-use-customizations
+  :type 'file)
 
 (defun rust-auto-use ()
   "Attempts to insert a required `use` statement for the symbol at point."
