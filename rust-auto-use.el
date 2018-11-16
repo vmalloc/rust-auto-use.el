@@ -40,6 +40,7 @@
   :group 'rust-auto-use-customizations
   :type 'file)
 
+;;;###autoload
 (defun rust-auto-use ()
   "Attempts to insert a required `use` statement for the symbol at point."
   (interactive)
