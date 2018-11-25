@@ -31,8 +31,7 @@
 
 (defgroup rust-auto-use-customizations nil
   "rust-auto-use customization group"
-  :group 'rust-mode
-  )
+  :group 'rust-mode)
 
 (defcustom rust-auto-use-cache-filename
   (expand-file-name ".rust-auto-use-cache" user-emacs-directory)
@@ -44,19 +43,20 @@
 (defun rust-auto-use ()
   "Attempts to insert a required `use` statement for the symbol at point."
   (interactive)
-  (save-excursion (rust-auto-use--insert-use-line (rust-auto-use--deduce-use-line))))
+  (save-excursion
+    (rust-auto-use--insert-use-line (rust-auto-use--deduce-use-line))))
 
 (defun rust-auto-use--insert-use-line (use-line)
   "Insert the actual use line USE-LINE into the code."
   (save-excursion
     (goto-char (point-min))
-    (if (not (search-forward-regexp "^use" nil t))
-        (progn (while (or (looking-at "/")
-                          (looking-at "extern"))
-                 (forward-line)
-                 (beginning-of-line))
-               (newline)
-               (forward-line -1)))
+    (unless (search-forward-regexp "^use" nil t)
+      (while (or (looking-at "/")
+                 (looking-at "extern"))
+        (forward-line)
+        (beginning-of-line))
+      (newline)
+      (forward-line -1))
     (end-of-line)
     (newline)
     (insert use-line)))
@@ -65,15 +65,17 @@
   "Attempt to deduce which line to insert based on the cached values.  If none is found, prompt the user to enter the module to use."
   (let ((symbol (symbol-at-point)))
     (let ((cached-result (gethash symbol rust-auto-use--symbol-cache)))
-      (if cached-result cached-result (rust-auto-use--cache-result symbol (format "use %s::%s;"
-                                                                                  (read-string (format "import %s from? " symbol)) symbol))))))
+      (or cached-result
+          (rust-auto-use--cache-result
+           symbol
+           (format "use %s::%s;" (read-string (format "import %s from? " symbol)) symbol))))))
 
 
 
 (defun rust-auto-use--cache-result (symbol result)
   "Cache a use-line RESULT for a given symbol SYMBOL for future use."
-  (progn (puthash symbol result rust-auto-use--symbol-cache)
-         (rust-auto-use--dump-symbol-cache))
+  (puthash symbol result rust-auto-use--symbol-cache)
+  (rust-auto-use--dump-symbol-cache)
   result)
 
 
@@ -92,8 +94,8 @@
 (defun rust-auto-use--load-symbol-cache ()
   "Load the symbol cache from a file."
   (load rust-auto-use-cache-filename t)
-  (if (not (boundp 'rust-auto-use--symbol-cache))
-      (setq rust-auto-use--symbol-cache (make-hash-table :test 'equal))))
+  (unless (boundp 'rust-auto-use--symbol-cache)
+    (setq rust-auto-use--symbol-cache (make-hash-table :test 'equal))))
 
 
 (rust-auto-use--load-symbol-cache)
