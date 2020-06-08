@@ -63,7 +63,7 @@
 
 (defun rust-auto-use--deduce-use-line ()
   "Attempt to deduce which line to insert based on the cached values.  If none is found, prompt the user to enter the module to use."
-  (let ((symbol (symbol-at-point)))
+  (let ((symbol (thing-at-point 'symbol)))
     (let ((cached-result (gethash symbol rust-auto-use--symbol-cache)))
       (or cached-result
           (rust-auto-use--cache-result
